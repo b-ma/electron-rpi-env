@@ -1,0 +1,23 @@
+{
+  "name": "pi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "./.local/runner --deploy",
+    "watch": "./.local/runner --watch"
+  },
+  "author": "",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "express": "^4.15.2",
+    "johnny-five": "0.10.13",
+    "raspi-io": "8.0.1"
+  },
+  "devDependencies": {
+    "colors": "^1.1.2",
+    "scp2": "^0.5.0",
+    "to-ssh": "^0.5.1",
+    "watch": "^1.0.2"
+  }
+}
