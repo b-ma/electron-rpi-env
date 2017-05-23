@@ -3,8 +3,13 @@
     {
       "username": "pi",
       "password": "raspberry",
-      "host": "192.168.1.20",
-      "path": "/home/pi"
+      "host": "192.168.1.100",
+      "path": "/home/pi/dev"
+    }, {
+      "username": "pi",
+      "password": "raspberry",
+      "host": "192.168.1.101",
+      "path": "/home/pi/dev"
     }
   ]
 }

@@ -11,26 +11,8 @@ const scp = require('./scp');
 const ssh = require('./ssh');
 const servers = require('./servers');
 
-
-// Promise.all([Promise.resolve(true), new Promise(() => { throw new Error('test'); }) ])
-//   .then((res) => console.log(res))
-//   .catch((err) => console.error(err.message));
-
-// Returns a list of the file in a given folder recursively.
-// function _getFileList(folder, callback) {
-//   const files = [];
-
-//   klaw(folder)
-//     .on('data', function(item) {
-//       if (item.stats.isFile() && isAllowed(item.path))
-//         files.push(item.path);
-//     })
-//     .on('end', function() {
-//       callback(files);
-//     });
-// }
-
-const ignoreRegExp = /node_modules|npm-debug.log|\.git|\.DS_Store/;
+// files that should not be synced
+const ignoreRegExp = /node_modules|npm-debug.log|\.git|\.DS_Store|\.local/;
 
 // local watch
 function watchLocal(srcDirectory, watchOptions) {
@@ -79,6 +61,7 @@ function watchLocal(srcDirectory, watchOptions) {
 
 function deploy(srcDirectory) {
   const srcFiles = fs.readdirSync(srcDirectory);
+
   srcFiles.forEach(filename => {
     files.get(filename)
       .then(file => files.filter(file, ignoreRegExp))
@@ -112,8 +95,8 @@ servers.configure(config.devices);
 
 switch (command) {
   case '--deploy':
-    throw new Error('disabled command: fix recursive `node_modules` filtering');
-    // deploy(cwd);
+    // throw new Error('disabled command: fix recursive `node_modules` filtering');
+    deploy(cwd);
     break;
   // keep file system in sync with remote servers
   case '--watch':

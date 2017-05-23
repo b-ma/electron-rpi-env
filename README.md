@@ -15,46 +15,17 @@
 - on remote machines (raspberry pi) run:
 `npm install --only=prod`
 
-# harware
 
-must be executed as sudo
+## REST API
 
-
-
-## NEXT STEP
-
-- when pressed 3 seconds
-  + configure as wifi access point, 
-  + run web services (rest API)
-- when pressed 3 times
-  + run web services
-
-/config/network
-- WiFi SSID / password (store all configs)
-- user password
-- static / dynamic ip
-
-2 components:
-- hardware monitor (buttons, volume wheel) component
-- configuration rest server
-
-PIN numbers
-- https://github.com/nebrius/raspi-io/wiki/Pin-Information#model-abraspberry-pi-2raspberry-pi-3raspberry-pi-zero
-
-## API
-
-
-GET     /db/network
-GET     /db/network/:id
-POST    /db/network
-PUT     /db/network/:id
-DELETE  /db/network/:id
-
-
-POST    /config/network
-=> execute selected
+- GET     /db/network
+- GET     /db/network/:id
+- POST    /db/network
+- PUT     /db/network/:id
+- DELETE  /db/network/:id
+- POST    /config/network
 
 ## TABLES
 
-network
+networks  
 SSID, passwd, type (static, dhcp), ip, netwask, gateway
