@@ -1,5 +1,7 @@
 # System
 
+Except for the bin scripts, all parts of this project are proof of concepts and must be completly rewritten.
+
 ## File system
 
 ```
