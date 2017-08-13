@@ -1,78 +1,64 @@
 #!/usr/bin/env node
-const config = require('../config.json');
 const fs = require('fs');
-const log = require('./log');
 const path = require('path');
 const watch = require('watch');
+const swarmConfig = require('../swarm.json');
 
 // promise based middlewares
-const files = require('./files');
-const scp = require('./scp');
-const ssh = require('./ssh');
-const servers = require('./servers');
-
-// files that should not be synced
-const ignoreRegExp = /node_modules|npm-debug.log|\.git|\.DS_Store|\.local/;
+const log = require('./lib/log');
+const files = require('./lib/files');
+const sync = require('./lib/sync');
+const servers = require('./lib/servers');
 
 // local watch
 function watchLocal(srcDirectory, watchOptions) {
   watch.createMonitor(srcDirectory, watchOptions, function(monitor) {
     monitor.on('created', function(filename, stats) {
       files.get(filename)
-        .then(file => files.filter(file, ignoreRegExp))
         .then(file => {
           return servers
-            .all(server => scp.send(file, server))
+            .all(server => sync.send(file, server))
             .then(() => log.sendCreateSuccess(file));
-        }, file => {
-          return files.delete(file);
         })
         .catch(err => console.error(err.stack));
     });
 
     monitor.on('changed', function(filename, stats) {
       files.get(filename)
-        .then(file => files.filter(file, ignoreRegExp))
         .then(file => {
           return servers
-            .all(server => scp.send(file, server))
+            .all(server => sync.send(file, server))
             .then(() => log.sendUpdateSuccess(file));
-        }, file => {
-          return files.delete(file);
         })
         .catch(err => console.error(err.stack));
     });
 
     monitor.on('removed', function(filename, stats) {
       files.get(filename)
-        .then(file => files.filter(file, ignoreRegExp))
-        .then(file => files.delete(file))
         .then(file => {
           return servers
-            .all(server => ssh.rm(file, server))
+            .all(server => sync.delete(file, server))
             .then(() => log.sendDeleteSuccess(file));
-        }, file => {
-          return files.delete(file);
         })
         .catch(err => console.error(err.stack));
     });
   });
 }
 
-function deploy(srcDirectory) {
+function deploy(srcDirectory, ignoreRegExp) {
   const srcFiles = fs.readdirSync(srcDirectory);
 
   srcFiles.forEach(filename => {
     files.get(filename)
       .then(file => files.filter(file, ignoreRegExp))
       .then(file => {
-          return servers
-            .all(server => scp.send(file, server))
-            .then(() => log.sendUpdateSuccess(file));
-        }, file => {
-          return files.delete(file);
-        })
-        .catch(err => console.error(err.stack));
+        return servers
+          .all(server => sync.send(file, server))
+          .then(() => log.sendUpdateSuccess(file));
+      }, (file) => {
+        console.log('reject', file.rel)
+      })
+      .catch(err => console.error(err.stack));
   })
 }
 
@@ -82,21 +68,24 @@ function deploy(srcDirectory) {
 
 const cwd = process.cwd();
 
+// files that should not be synced
+const ignoreRegExp = /node_modules|npm-debug.log|\.git|\.DS_Store|package-lock.json/;
+
 const watchOptions = {
   ignoreDotFiles: false,
   ignoreUnreadableDir: true,
   ignoreNotPermitted: true,
   interval: 2,
-  filter: (path) => !(/node_modules/.test(path)),
+  filter: (path) => !(ignoreRegExp.test(path)),
 };
 
 const command = process.argv[2];
-servers.configure(config.devices);
+servers.configure(swarmConfig.devices);
 
 switch (command) {
   case '--deploy':
     // throw new Error('disabled command: fix recursive `node_modules` filtering');
-    deploy(cwd);
+    deploy(cwd, ignoreRegExp);
     break;
   // keep file system in sync with remote servers
   case '--watch':

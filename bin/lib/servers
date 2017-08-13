@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+let _servers = null;
+
+module.exports.configure = (servers) => {
+  _servers = servers;
+}
+
+module.exports.all = (callback) => {
+  const promises = _servers.map(server => callback(server));
+  return Promise.all(promises);
+}

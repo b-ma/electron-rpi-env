@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+const pkg = require('../../package.json');
+const chalk = require('chalk');
+const path = require('path');
+
+const prefix = '[' + pkg.name + ']\t';
+
+function getDeltaTime(time) {
+  return new Date().getTime() - time;
+}
+
+module.exports.sendCreateSuccess = file => {
+  const msg = prefix + chalk.green('%s: successfully created');
+  console.log(msg, file.rel);
+  return Promise.resolve(file);
+};
+
+module.exports.sendUpdateSuccess = file => {
+  const msg = prefix + chalk.green('%s: successfully updated');
+  console.log(msg, file.rel);
+  return Promise.resolve(file);
+};
+
+module.exports.sendDeleteSuccess = file => {
+  const msg = prefix + chalk.green('%s: successfully deleted');
+  console.log(msg, file.rel);
+  return Promise.resolve(file);
+};
+
+  // sendError: function(file) {
+  //   console.log('send error');
+  //   return Promise.resolve(file);
+  // },

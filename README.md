@@ -1,13 +1,17 @@
-# Full env
+# System
 
-- `.local` contains the local scripts for remote developpement
-- `apps` user defined applications
-- `boot` scripts to execute when the system boots
-- `hardware` gpio interfaces
-- `web-services` REST API and client interface for high-level configuration and controls.
+## File system
 
+/system
+  bootstrap.js
+  /data
+  /hardware
+  /web
+    server.js
+    /api
+    /frontend
 
-# install
+## Install
 
 - on local machine (development machine) run:
 `npm install --only=dev`
@@ -16,16 +20,22 @@
 `npm install --only=prod`
 
 
-## REST API
+## Web
 
-- GET     /db/network
-- GET     /db/network/:id
-- POST    /db/network
-- PUT     /db/network/:id
-- DELETE  /db/network/:id
-- POST    /config/network
+- Configuration from REST API and Front-end
+  + reboot
+  + CRUD on WiFi configurations
+  + choose WiFI
 
-## TABLES
+    wpa_supplicant
+    # database (flat files as a starting point)
+    - list of known WiFi (wiht priorities)
+    - current WiFi
+    - compare known WiFi with known ones and connect
 
-networks  
-SSID, passwd, type (static, dhcp), ip, netwask, gateway
+    https://raspberrypi.stackexchange.com/questions/37920/how-do-i-set-up-networking-wifi-static-ip-address/37921#37921
+
+  + start / stop an applications
+  + launch application in development mode
+  + connect to another WiFi (require reboot ?)
+

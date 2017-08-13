@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+const path = require('path');
+const cwd = process.cwd();
+
+/**
+ *
+ */
+module.exports.get = (abs) => {
+  const rel = path.relative(cwd, abs);
+  const file = { abs, rel };
+
+  return Promise.resolve(file);
+}
+
+/**
+ *
+ */
+module.exports.filter = (file, regexp) => {
+  if (regexp.test(file.rel))
+    return Promise.reject(file);
+
+  return Promise.resolve(file);
+}
